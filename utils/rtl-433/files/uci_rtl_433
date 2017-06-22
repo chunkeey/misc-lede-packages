@@ -1,0 +1,6 @@
+config rtl_433
+	list output		"json:/tmp/sensors433.json"
+	option runtime		60
+	option respawn_interval	3540
+	option utc		1
+	option enabled		1
