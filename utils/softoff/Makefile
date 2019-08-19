@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=softoff
-PKG_VERSION:=2018-08-04
+PKG_VERSION:=2019-08-19
 PKG_RELEASE=1
 PKG_LICENSE:=GPL-2.0
 PKG_MAINTAINER:=Christian Lamparter <chunkeey@googlemail.com>
@@ -12,7 +12,7 @@ define Package/softoff
 	SECTION:=utils
 	CATEGORY:=Utilities
 	TITLE:=softoff utilities
-	DEPENDS:=+hdparm +busybox
+	DEPENDS:=+busybox
 endef
 
 define Package/softoff/description

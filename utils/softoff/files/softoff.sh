@@ -3,32 +3,27 @@
 # soft-off program
 # This program uses OpenWRT/LEDE's sysupgrade functionality to get
 # a device into a "soft-off" state. This is because not all devices
-# do have a working "poweroff" and if a user wants to unplug the 
+# do have a working "poweroff" and if a user wants to unplug the
 # device in order to move it. she/he might want this functionality.
 
 # Currently, this script tries to put all attached harddrives into
-# standby mode (which is why it requires hdparm) and tries to powers
-# off all LEDs.
+# standby mode (by deleting them, so the kernel will put them to
+# sleep) and tries to powers off all LEDs.
 
 . /lib/functions.sh
 . /lib/functions/system.sh
 . /lib/upgrade/common.sh
 
-HDPARM=$(command -v hdparm)
-
-[ -z "$HDPARM" ] && {
-	(>&2 echo hdparm not installed.)
-	exit 1
-}
-
 case "$1" in
 stage2)
 	for dev in /dev/sd*[a-z]; do
-		hdparm -y $dev
+		rawdev=$(basename "$dev")
+		echo 1 > "/sys/class/block/$rawdev/device/delete"
 	done
 
 	for leds in /sys/class/leds/*; do
-		echo 0 > $leds/brightness
+		echo "none" > "$leds/trigger"
+		echo 0 > "$leds/brightness"
 	done
 
 	while :; do
@@ -37,8 +32,7 @@ stage2)
 	;;
 *)
 	install_bin /sbin/upgraded
-	install_bin $0
-	install_bin /sbin/hdparm
+	install_bin "$0"
 
 	ifdown -a
 
